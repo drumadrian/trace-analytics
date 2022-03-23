@@ -3,7 +3,7 @@
 Purpose: Create and Put more files into a single S3 bucket as the PUT application scales out.  Get the files from the S3 bucket as the GET application scales out. Monitor execution using X-Ray, Open Telemetry, Grafana, and log the data using the python-elasticsearch-logger.  https://github.com/drumadrian/python-elasticsearch-logger
 
 
-![MacDown logo](diagram2.png)
+![MacDown logo](helperfiles/diagram2.png)
 
 ## Summary
 

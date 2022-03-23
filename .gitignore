@@ -3321,3 +3321,7 @@ helper files/venv/lib/python3.9/site-packages/wrapt-1.14.0.dist-info/METADATA
 helper files/venv/lib/python3.9/site-packages/wrapt-1.14.0.dist-info/RECORD
 helper files/venv/lib/python3.9/site-packages/wrapt-1.14.0.dist-info/top_level.txt
 helper files/venv/lib/python3.9/site-packages/wrapt-1.14.0.dist-info/WHEEL
+trace-analytics.code-workspace
+getcontainer/.DS_Store
+putcontainer/.DS_Store
+.DS_Store
