@@ -21,7 +21,7 @@ from aws_xray_sdk.core import patch_all
 # patch_all()
 
 logging.basicConfig(level='WARNING')
-logging.getLogger('aws_xray_sdk').setLevel(logging.DEBUG)
+# logging.getLogger('aws_xray_sdk').setLevel(logging.DEBUG)
 
 
 AWS_REGION_CONTAINING_ELASTICSEARCH_CLUSTER='us-west-2'
@@ -104,13 +104,13 @@ def get_object_loop(QUEUEURL, sqs_client, s3_client):
         #######################################
         # Start X-Ray segment 
         #######################################
-        xray_recorder.begin_segment('get')
-        xray_recorder.begin_subsegment('get')
-        # xray_recorder.configure(service='Read Service')
-        # xray_recorder.configure(plugins=plugins)
-        # xray_recorder.configure(sampling=False)
-        # xray_recorder.configure(context_missing='LOG_ERROR')
-        xray_recorder.configure(daemon_address='0.0.0.0:2000')
+        # xray_recorder.begin_segment('get')
+        # xray_recorder.begin_subsegment('get')
+        # # xray_recorder.configure(service='Read Service')
+        # # xray_recorder.configure(plugins=plugins)
+        # # xray_recorder.configure(sampling=False)
+        # # xray_recorder.configure(context_missing='LOG_ERROR')
+        # xray_recorder.configure(daemon_address='0.0.0.0:2000')
         # xray_recorder.configure(sampling=False)
         # current_xray_segment = xray_recorder.current_segment()
         # segment.put_metadata("function name", "get_object_loop()")
@@ -131,8 +131,8 @@ def get_object_loop(QUEUEURL, sqs_client, s3_client):
         #######################################
         # segment.put_annotation('get_object_loop() duration', time_diff_string)
         # segment.put_metadata("get_object_loop() duration", time_diff_string)
-        xray_recorder.end_subsegment()
-        xray_recorder.end_segment()
+        # xray_recorder.end_subsegment()
+        # xray_recorder.end_segment()
 
 
         #######################################################

@@ -38,7 +38,10 @@ ADD ./put.py /app/put.py
 #     rm "$DT_HOME/oneagent.zip"
 # ENTRYPOINT [ "/opt/dynatrace/oneagent/dynatrace-agent64.sh" ]
 # CMD [ "executable", "param1", "param2" ] # the command of your application, for example, Java
+
 CMD [ "python3", "/app/put.py" ] # the command of the application
+
+# CMD [ "OTEL_EXPORTER_OTLP_ENDPOINT=10.0.0.160", "OTEL_PROPAGATORS=xray", "OTEL_PYTHON_ID_GENERATOR=xray", "opentelemetry-instrument python3 /app/put.py" ] # the command of the application wrapped in Open Telemetry auto-instrumentation code
 
 
 
