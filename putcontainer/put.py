@@ -29,22 +29,31 @@ AWS_REGION_CONTAINING_ELASTICSEARCH_CLUSTER='us-west-2'
 # Create our custom own session
 credentials = Session().get_credentials()
 
-handler = CMRESHandler(hosts=[{'host': 'search-s3-to-e-s3toel-16yzhw9sm8ixo-fomnghhc2ljvl7uhm2pffmnywe.us-west-2.es.amazonaws.com', 'port': 443}],
+logs_handler = CMRESHandler(hosts=[{'host': 'search-s3-to-e-s3toel-16yzhw9sm8ixo-fomnghhc2ljvl7uhm2pffmnywe.us-west-2.es.amazonaws.com', 'port': 443}],
                         auth_type=CMRESHandler.AuthType.AWS_REFRESHABLE_CREDENTIALS,
                         aws_refreshable_credentials=credentials,
                         es_index_name="trace-analytics-put",
                         aws_region=AWS_REGION_CONTAINING_ELASTICSEARCH_CLUSTER,
                         use_ssl=True,
                         verify_ssl=True,
-                        es_additional_fields={'App': 'trace-analytics-put', 'Environment': 'Dev'})
+                        es_additional_fields={'App': 'trace-analytics-put-logs', 'Environment': 'Dev'})
 
+metrics_handler = CMRESHandler(hosts=[{'host': 'search-s3-to-e-s3toel-16yzhw9sm8ixo-fomnghhc2ljvl7uhm2pffmnywe.us-west-2.es.amazonaws.com', 'port': 443}],
+                        auth_type=CMRESHandler.AuthType.AWS_REFRESHABLE_CREDENTIALS,
+                        aws_refreshable_credentials=credentials,
+                        es_index_name="trace-analytics-put",
+                        aws_region=AWS_REGION_CONTAINING_ELASTICSEARCH_CLUSTER,
+                        use_ssl=True,
+                        verify_ssl=True,
+                        es_additional_fields={'App': 'trace-analytics-put-metrics', 'Environment': 'Dev'})
 
 log = logging.getLogger("trace-analytics-put-logger")
-metrics = logging.getLogger("trace-analytics-put-metrics")
 log.setLevel(logging.INFO)
+log.addHandler(logs_handler)
+
+metrics = logging.getLogger("trace-analytics-put-metrics")
 metrics.setLevel(logging.INFO)
-log.addHandler(handler)
-metrics.addHandler(handler)
+metrics.addHandler(metrics_handler)
 # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
