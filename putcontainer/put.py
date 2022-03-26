@@ -42,7 +42,9 @@ handler = CMRESHandler(hosts=[{'host': 'search-s3-to-e-s3toel-16yzhw9sm8ixo-fomn
 log = logging.getLogger("trace-analytics-put-logger")
 metrics = logging.getLogger("trace-analytics-put-metrics")
 log.setLevel(logging.INFO)
+metrics.setLevel(logging.INFO)
 log.addHandler(handler)
+metrics.addHandler(handler)
 # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
