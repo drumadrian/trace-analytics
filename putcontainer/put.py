@@ -142,7 +142,7 @@ def start_uploads(bucketname, queueURL, sqs_client):
         s3_file_name=now.strftime("%f_%H:%M:%S.%f") + "_diagram" + ".png"
         log.info("\n s3_file_name: {0}\n".format(s3_file_name))
 
-        uploaded = upload_to_bucket('/app/diagram.png', bucketname, s3_file_name)
+        uploaded = upload_to_bucket('../helperfiles/diagram.png', bucketname, s3_file_name)
 
         if uploaded:
             enqueue_object(bucketname, s3_file_name, queueURL, sqs_client)
