@@ -40,6 +40,7 @@ handler = CMRESHandler(hosts=[{'host': 'search-s3-to-e-s3toel-16yzhw9sm8ixo-fomn
 
 
 log = logging.getLogger("trace-analytics-put-logger")
+metrics = logging.getLogger("trace-analytics-put-metrics")
 log.setLevel(logging.INFO)
 log.addHandler(handler)
 # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -74,6 +75,7 @@ def upload_to_bucket(local_file, bucket, s3_file):
     try:
         s3_response = s3.upload_file(local_file, bucket, s3_file)
         log.info("S3 Upload Successful")
+        metrics.info("{metric:1}")
         return True
     except FileNotFoundError:
         log.error("The file was not found")
