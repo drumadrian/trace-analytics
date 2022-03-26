@@ -190,6 +190,6 @@ if __name__ == '__main__':
     # BUCKETNAME = get_bucketname()
     BUCKETNAME = "s3loadtest-storagebucket04df299d-6wyssbwsav39"
     
-    sqs_client = boto3.client('sqs')
+    sqs_client = boto3.client('sqs', region_name="us-west-2")
     start_uploads(BUCKETNAME, QUEUEURL, sqs_client)
     
