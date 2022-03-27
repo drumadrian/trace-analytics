@@ -86,7 +86,7 @@ def upload_to_bucket(local_file, bucket, s3_file):
     try:
         s3_response = s3.upload_file(local_file, bucket, s3_file)
         log.info("S3 Upload Successful")
-        metrics.info("{metric:1}")
+        metrics.info(1)
         return True
     except FileNotFoundError:
         log.error("The file was not found")
