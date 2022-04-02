@@ -14,11 +14,14 @@ from cmreslogging.handlers import CMRESHandler
 import elasticsearch
 import sys
 
-# from aws_xray_sdk.core import xray_recorder
-# from aws_xray_sdk.core import patch_all
+# for Amazon XRAY Tracing
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.core import patch_all
+plugins = ('ElasticBeanstalkPlugin', 'EC2Plugin', 'ECSPlugin')
 
-
-# plugins = ('ElasticBeanstalkPlugin', 'EC2Plugin', 'ECSPlugin')
+# This causes an error when an S3 upload occurs:
+#   ERROR:aws_xray_sdk.core.context:cannot find the current segment/subsegment, please make sure you have a segment open
+#   WARNING:aws_xray_sdk.core.recorder:No segment found, cannot begin subsegment s3
 # patch_all()
 
 logging.basicConfig(level='WARNING')
@@ -54,7 +57,6 @@ log.addHandler(logs_handler)
 metrics = logging.getLogger("trace-analytics-put-metrics")
 metrics.setLevel(logging.INFO)
 metrics.addHandler(metrics_handler)
-# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 
@@ -126,23 +128,21 @@ def enqueue_object(bucketname, s3_file_name, queueURL, sqs_client):
 #   Upload files continuously to S3
 ####################################
 def start_uploads(bucketname, queueURL, sqs_client):
-    # interations_list = [1,2,3,4,5,6,7,8,9,10]
-    # for i in interations_list:
+
+
     while True:
+        
         #######################################
         # Start X-Ray segment 
         #######################################
-        # xray_recorder.begin_segment('put')
-        # xray_recorder.begin_subsegment('put')
-        # xray_recorder.configure(service='Read Service')
-        # xray_recorder.configure(plugins=plugins)
-        # xray_recorder.configure(sampling=False)
-        # xray_recorder.configure(context_missing='LOG_ERROR')
-        # xray_recorder.configure(daemon_address='0.0.0.0:2000')
-        # xray_recorder.configure(sampling=False)
-        # current_xray_segment = xray_recorder.current_segment()
-        # segment.put_metadata("function name", "put_object_loop()")
-        # subsegment = xray_recorder.begin_subsegment('annotations')
+        xray_recorder.configure(service='Write Service')
+        xray_recorder.configure(plugins=plugins)
+        xray_recorder.configure(sampling=False)
+        xray_recorder.configure(context_missing='LOG_ERROR')
+        xray_recorder.configure(daemon_address='0.0.0.0:2000')
+        segment = xray_recorder.begin_segment('put segment')
+        subsegment = xray_recorder.begin_subsegment('put subsegment')
+
 
         #######################################
         # Log the current time from the system 
@@ -155,21 +155,13 @@ def start_uploads(bucketname, queueURL, sqs_client):
         s3_file_name=now.strftime("%f_%H:%M:%S.%f") + "_diagram" + ".png"
         log.info("\n s3_file_name: {0}\n".format(s3_file_name))
 
-        uploaded = upload_to_bucket('../helperfiles/diagram.png', bucketname, s3_file_name)
+        uploaded = upload_to_bucket('/app/diagram.png', bucketname, s3_file_name)
 
         if uploaded:
             enqueue_object(bucketname, s3_file_name, queueURL, sqs_client)
         else:
             log.error("Error uploading object: {0} to bucket: {1}".format(s3_file_name, bucketname))
             now = datetime.now() # current date and time
-
-        #######################################
-        # End X-Ray segment 
-        #######################################
-        # segment.put_annotation('put_object_loop() duration', time_diff_string)
-        # segment.put_metadata("put_object_loop() duration", time_diff_string)
-        # xray_recorder.end_subsegment()
-        # xray_recorder.end_segment()
 
 
         ###########
@@ -183,6 +175,14 @@ def start_uploads(bucketname, queueURL, sqs_client):
         log.info("\n Interation Duration of: start_uploads(): " + time_diff_string)
 
 
+        #######################################
+        # End X-Ray segment 
+        #######################################
+        xray_recorder.put_metadata("function name", "start uploads")
+        xray_recorder.put_metadata("put_object_loop_duration", time_diff_string)
+        xray_recorder.put_annotation("put_object_loop_duration", time_diff_string)
+        xray_recorder.end_subsegment()
+        xray_recorder.end_segment()
 
 
 
